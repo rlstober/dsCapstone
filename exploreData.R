@@ -132,4 +132,18 @@ qplot(newsWords, xlab="Words per Line", ylab="Frequency of Count", title="News W
 ggsave(filename="./data/newsWords.png", width = 4, height=4, dpi=100)
 
 
+##Sampling
+
+saveFileSample <- function(x,y,n){z<-sample(x,n);save(z, file = y)}
+# Sample File names
+blogSave<-"./data/blogsSamp.RData"
+twitterSave<-"./data/twitterSamp.RData"
+newsSave<-"./data/newsSamp.RData"
+
+#
+set.seed<-12345
+sampSize<-10000
+saveFileSample(blogData,blogSave,sampSize)
+saveFileSample(twitterData,twitterSave,sampSize)
+saveFileSample(newsData,newsSave,sampSize)
 
