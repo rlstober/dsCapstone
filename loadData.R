@@ -1,22 +1,42 @@
-#Load Data
+##Load Data
 
-#File names
-blogFile<-"./data/en_US.blogs.txt"
-twitterFile<-"./data/en_US.twitter.txt"
-newsFile<-"./data/en_US.news.txt"
+## Download process
+
+# File names
+destFile <- "./data/Coursera-SwiftKey.zip"
+sourceFile <- "http://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip"
+
+# download
+download.file(sourceFile, destFile)
+
+# extract 
+unzip(destFile)
 
 
-#Read 
+#Read  process
 # Use function to avoid copying code and ensure all data is treated the same.
 #Read in binary mode for news feel
 #skipNul needed for twitter
-# set to all read UTF-8 encoding
+# set UTF-8 encoding
 
-readFiles<- function(x){readLines(file(x, open="rb"), encoding="UTF-8", skipNul=TRUE)}
+readFiles<- function(x,openMode){
+  con <- file(x,  open=openMode)
+  df<-readLines(con, encoding="UTF-8", skipNul=TRUE)
+  close(con)
+  return(df)
+  }
 
-blogData<-readFiles(blogFile)
-twitterData<-readFiles(twitterFile)
-newsData<-readFiles(newsFile)
+#File names
+blogFile<-"./final/en_us/en_US.blogs.txt"
+twitterFile<-"./final/en_us/en_US.twitter.txt"
+newsFile<-"./final/en_us/en_US.news.txt"
+
+
+openMode<- "rt"
+blogData<-readFiles(blogFile,openMode)
+twitterData<-readFiles(twitterFile,openMode)
+openMode<- "rb"
+newsData<-readFiles(newsFile,openMode)
 
 #Question 1
 #The en_US.blogs.txt file is how many megabytes?
@@ -41,6 +61,9 @@ max(nchar(blogData))
 max(nchar(twitterData))
 max(nchar(newsData))
 
+mean(nchar(twitterData))
+mean(nchar(blogData))
+mean(nchar(newsData))
 #max(nchar(blogData))
 #[1] 40,833
 
@@ -69,29 +92,4 @@ twitterData[biostats]
 sum(grepl("A computer once beat me at chess, but it was no match for me at kickboxing", twitterData))
 #3
 
-# save in Rdata format for later use
-saveFiles <- function(x,y){save(x, file = y)}
 
-#File names
-blogSave<-"./data/blogs.RData"
-twitterSave<-"./data/twitter.RData"
-newsSave<-"./data/news.RData"
-
-saveFiles(blogData,blogSave)
-saveFiles(twitterData,twitterSave)
-saveFiles(newsData,newsSave)
-
-
-#Save sample
-saveFileSample <- function(x,y,n){z<-sample(x,n);save(z, file = y)}
-# Sample File names
-blogSave<-"./data/blogsSamp.RData"
-twitterSave<-"./data/twitterSamp.RData"
-newsSave<-"./data/newsSamp.RData"
-
-#
-set.seed<-12345
-sampSize<-10000
-saveFileSample(blogData,blogSave,sampSize)
-saveFileSample(twitterData,twitterSave,sampSize)
-saveFileSample(newsData,newsSave,sampSize)
