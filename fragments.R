@@ -38,18 +38,6 @@ writeFileSample(twitterData,twitterSamp,sampSize)
 openMode<- "rb"
 writeFileSample(newsData,newsSamp,sampSize)
 
-saveFileSample <- function(x,y,n){z<-sample(x,n);save(z, file = y)}
-# Sample File names
-blogSave<-"./data/blogsSamp.RData"
-twitterSave<-"./data/twitterSamp.RData"
-newsSave<-"./data/newsSamp.RData"
-
-#
-set.seed<-12345
-sampSize<-10000
-saveFileSample(blogData,blogSave,sampSize)
-saveFileSample(twitterData,twitterSave,sampSize)
-saveFileSample(newsData,newsSave,sampSize)
 
 
 
@@ -97,3 +85,7 @@ names(lengthDF[2])
 blogSampStats<-stri_stats_latex(blogDataSamp)
 twitterSampStats<-stri_stats_latex(twitterDataSamp)
 newsSampStats<-stri_stats_latex(newsDataSamp)
+
+# create corpus from directory folder sampleData
+txt<-"./sampleData"
+(myCorpus <- Corpus(DirSource(txt),readerControl = list(reader=readPlain, language = "en",load = TRUE)))
