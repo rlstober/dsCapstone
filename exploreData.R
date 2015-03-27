@@ -69,7 +69,7 @@ fileDFnames<-c("Data Source","File Size (Mb)", "Number of Lines", "Characters pe
 
 fileDF<-data.frame(fileSources,fileSizeMb,fileLines,fileMCL)
 names(fileDF)<-fileDFnames
-
+rm(z)
 
 ## word stats
 
@@ -92,15 +92,14 @@ twitterWordsM <- as.matrix(summary(twitterWords))
 newsWords <- stri_count_words(newsData)
 newsWordsM <- as.matrix(summary(newsWords))
 
-#Build table
-wordsDF<-as.data.frame(cbind(blogWordsM, twitterWordsM,newsWordsM))
-names(wordsDF)<-fileSources
-#(wordsDF)
+  #Build table
+  wordsDF<-as.data.frame(cbind(blogWordsM, twitterWordsM,newsWordsM))
+  names(wordsDF)<-fileSources
+  #(wordsDF)
 
 
 ## Save all this work
 
-saveFiles <- function(x,y){save(x, file = y)}
 
 #File names
 blogSave<-"./data/blogs.RData"
@@ -111,19 +110,18 @@ savestatsDF<-"./data/statsDF.RData"
 savewordsDF<-"./data/wordsDF.RData"
 
 
-saveFiles(blogData,blogSave)
-saveFiles(twitterData,twitterSave)
-saveFiles(newsData,newsSave)
-saveFiles(fileDF,savefileDF)
-saveFiles(statsDF,savestatsDF)
-saveFiles(wordsDF,savewordsDF)
-
+save(blogData,file=blogSave)
+save(twitterData,file=twitterSave)
+save(newsData,file=newsSave)
+save(fileDF,file=savefileDF)
+save(statsDF,file=savestatsDF)
+save(wordsDF,file=savewordsDF)
 
 
 #plot
 
-qplot(blogWords, xlab="Words per Line", ylab="Frequency of Count", main="Blog Word Frequency",xlim=c(0,200), binwidth=1)
-ggsave(filename="./data/blogWords.png", width = 4, height=4, dpi=100)
+blogPlot<-qplot(blogWords, xlab="Words per Line", ylab="Frequency of Count", main="Blog Word Frequency",xlim=c(0,200), binwidth=1)
+ggsave(filename="./data/blogWords.png", blogPlot,width = 4, height=4, dpi=100)
 
 qplot(twitterWords, xlab="Words per Line", ylab="Frequency of Count", main="Twitter Word Frequency",xlim=c(0,200), binwidth=1)
 ggsave(filename="./data/twitterWords.png", width = 4, height=4, dpi=100)
