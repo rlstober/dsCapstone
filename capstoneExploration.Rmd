@@ -9,7 +9,7 @@ output: html_document
 
 Around the world, people are spending an increasing amount of time on their mobile devices for email, social networking, banking and a whole range of other activities. But typing on mobile devices can be a serious pain. SwiftKey, our corporate partner in this capstone, builds a smart keyboard that makes it easier for people to type on their mobile devices. One cornerstone of their smart keyboard is predictive text models. 
 
-The goal of this project is the understanding and building predictive text models like those used by SwiftKey.This project will analyze a large corpus of text documents to discover the structure in the data and how words are put together. It will cover cleaning and analyzing text data, then building and sampling from a predictive text model. Finally, we will build a predictive text shiny app to demonstrate the product, and a slide deck to pitch it.
+The goal of this project is the understanding and building predictive text models like those used by SwiftKey. This project will analyze a large corpus of text documents to discover the structure in the data and how words are put together. It will cover cleaning and analyzing text data, then building and sampling from a predictive text model. Finally, we will build a predictive text shiny app to demonstrate the product, and a slide deck to pitch it.
 
 This paper focuses on the initial exploration and analysis of the data.
 
@@ -27,69 +27,90 @@ http://www.corpora.heliohost.org/aboutcorpus.html for details on the corpora ava
 
 # Exploratory Analysis
 
-The followinf libraries were used
+The following libraries were used
 
-```{r}
+```{r eval=FALSE}
 library(stringi)
 library(ggplot2)
-
+library(tm)
+library(RWeka)
+library(slam)
 ```
 
+## Data Files
 
-Files were downloaded and unzipped. The english locales files were read. We took a look at file sizes, number of words and characters per lines toget an overall sense of the datasets. The data shows sight differences due to sources.
+Files were downloaded and unzipped. The English locales files were read. We took a look at file sizes, number of words and characters per lines to get an overall sense of the datasets. The data shows sight differences due to sources.
 
-The Blog is the largest dataset. It does so even though it has the fewst lines, by also having the max charaxcters per line yet. Converesly, twitter the smallest datset has the most lines but fewest characters per line. Twitter likely has the fewest characters per line due to it's 140 charcater limit. The length of a news line is slightly less than a blog, which may reflect a need of brevity in reporitgn stories, not present in blogs.
+The Blog is the largest dataset. It does so even though it has the fewest lines, by also having the max characters per line yet. Conversely, twitter the smallest dataset has the most lines but fewest characters per line. Twitter likely has the fewest characters per line due to its 140 character limit. The length of a news line is slightly less than a blog, which may reflect a need of brevity in reporting stories, not present in blogs.
 
-```{r}
+
+```{r echo = FALSE}
 load("./data/fileDF.RData");print(fileDF)
 ```
 
 
-IQR of Word Counts. The intra-quatrile range or IQR is shown below. It further demonstartes the differences in the three datasets. For example the mean 
+## String Statistics
 
-```{r}
+We also looked at string statistics. In this case the proportion of whitespace characters to word characters is roughly  the same, at 26%, 28% and 24% for blog, twitter and news,
+
+```{r echo = FALSE}
+load("./data/statsDF.RData");print(statsDF)
+```
+
+## Word Counts
+
+IQR of Word Counts. The intra-quartile range or IQR is shown below. It further demonstrates the differences in the three datasets. For example the means are different across all three and while the median is close to the mean for twitter and news, they are skewed for blogs.
+
+```{r echo = FALSE}
 load("./data/wordsDF.RData");print(wordsDF)
 ```
 
 
-We also looked at string Statistics. In this case the proportion of whitespace characters to word characters is roungly the same, at 26%, 28% and 24% for blog, twitter and news,
+##Word Frequency Comparison
+
+The graphs below further illustrate the different profiles of the data sets.
+
+![Blog Words Word Frequencies](C:\Users\bstober\Documents\GitHub\dsCapstone\data\blogWords.png)
+
+![Blog Words Word Frequencies](C:\Users\bstober\Documents\GitHub\dsCapstone\data\twitterWords.png)
+
+![Blog Words Word Frequencies](C:\Users\bstober\Documents\GitHub\dsCapstone\data\newsWords.png)
 
 
-```{r}
-load("./data/statsDF.RData");print(statsDF)
+#N-Gram Analysis
+
+In this step we create a Term Document Matrix (TDM) from the three documents. We built a corpus based on 10,000 line samples from each text source. Preprocessing steps in creation of the TDM included:
+
+  1. Remove extra whitespace
+  2. Remove pronunciation
+  3. Remove profanity
+  4. Remove numbers
+
+Below is a summary of word counts for 1-4 N-grams.
+
+```{r echo = FALSE}
+load("./data/ngramMat.RData");print(ngramMat)
 ```
 
+##N-Gram Frequency Comparison
 
-Pictures
+The following histograms show the top 20 words in the n-grams.
 
-![Blog Words Word G=frequencies]("//localhost://Users/bstober/Documents/GitHub/dsCapstone/data/blogWords.png")
+![Blog Words Word Frequencies](C:\Users\bstober\Documents\GitHub\dsCapstone\data\uniTDMfreq20.png)
 
+![Blog Words Word Frequencies](C:\Users\bstober\Documents\GitHub\dsCapstone\data\biTDMfreq20.png)
 
+![Blog Words Word Frequencies](C:\Users\bstober\Documents\GitHub\dsCapstone\data\triTDMfreq20.png)
 
+![Blog Words Word Frequencies](C:\Users\bstober\Documents\GitHub\dsCapstone\data\quadTDMfreq20.png)
 
-#source("./data/blogWords.png")
-
-#library(png)
-#blogWords<-png(file="C:\Users\bstober\Documents\GitHub\dsCapstone\data\blogWords.png")
-
-qplot(png(file="./data/blogWords.png"))
-plot
-
-
-
-
-
-#Preprocess and Train
-
-In this step we preprocess the data using PCA-principal component Analysis. The threshold parameter is set at 95% meaning that number of components chosen will explain 95% of the variance. The overall summary of the model and rank of variable importance is presented.
-
-
-
-#Results
-
-The predictions were correct in 19 out of 20 or 95% of the test cases. This 5% error is higher than the estimated 2.3%, but is not unreasonable considering the small number of cases being tested. It may also effect bias or over-fitting in the model.
 
 
 #Conclusions
 
-based on this study it appears that predicting the type of exercise performed, where type classifies if the exercise is done correctly, based on features collected via personal fitness devices is achievable with a high degree of accuracy. 
+The source data comes from three distinct data sets, Based on an exploration of that data it seems an ideal predictor would utilize different models depending on the source. As that i beyond the scope of this project, our predictor will not make any assumptions about the source of the data.
+
+Our predictive model will be based off the n-grams created. This would utilizing a lookup table based on frequency. Markov chains would be used to efficiently store the n-grams. Emphasis will be running fast predictions using limited memory. Back off models will need to be employed for unobserved n-grams.
+
+The shiny app will mimic the Swiftkey application. Based on an input of 1-3 words, the application will suggest three words for the user to choose from. 
+

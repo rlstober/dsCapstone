@@ -73,10 +73,10 @@ triToken <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
 quadToken <- function(x) NGramTokenizer(x, Weka_control(min = 4, max = 4)) 
 
 # tokenize 
-uniTDM<- TermDocumentMatrix(myCorpus, control = list(removeWhitespace = TRUE, removePunctuation = TRUE,removeNumbers = TRUE, stopwords = mystopwords, tokenizer = uniToken))
-biTDM<- TermDocumentMatrix(myCorpus, control = list(removeWhitespace = TRUE, removePunctuation = TRUE,removeNumbers = TRUE, stopwords = mystopwords, tokenizer = biToken))
-triTDM<- TermDocumentMatrix(myCorpus, control = list(removeWhitespace = TRUE, removePunctuation = TRUE,removeNumbers = TRUE, stopwords = mystopwords, tokenizer = triToken))
-quadTDM<- TermDocumentMatrix(myCorpus, control = list(removeWhitespace = TRUE, removePunctuation = TRUE,removeNumbers = TRUE, stopwords = mystopwords, tokenizer = quadToken))
+uniTDM<- TermDocumentMatrix(myCorpus, control = list(removePunctuation = TRUE,removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = uniToken))
+biTDM<- TermDocumentMatrix(myCorpus, control = list(removePunctuation = TRUE,removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = biToken))
+triTDM<- TermDocumentMatrix(myCorpus, control = list(removePunctuation = TRUE,removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = triToken))
+quadTDM<- TermDocumentMatrix(myCorpus, control = list(removePunctuation = TRUE,removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = quadToken))
 
 findFreqTerms(uniTDM, 1000)
 findFreqTerms(biTDM, 500)
@@ -99,6 +99,9 @@ mynames = list(c("Blogs", "News", "Twitter", "Totals"), c("Words","2-Gram","3-Gr
 dimnames(ngramMat)<-mynames
 (ngramMat)
 
+# save
+save(ngramMat,file="./data/nGramMat.RData")
+
 # inspect
 
 inspect(quadTDM[1:100, 1:3])
@@ -108,39 +111,41 @@ inspect(uniTDM[1:20, 1:3])
 df <- as.data.frame(inspect(quadTDM))
 
 # aggregate rows 
-uniRowAggregate<-rowSums(as.matrix(uniTDM))
-biAggregate<-rowSums(as.matrix(biTDM))
-triAggregate<-rowSums(as.matrix(triTDM))
-quadAggregate<-rowSums(as.matrix(quadTDM))
-
-names(triAggregate)
-
-uniLevels <- unique(uniTDM$dimnames$Terms)
-length(uniLevels)
-
-
-#compute  dissimilarity 
-install.packages('proxy')
-library('proxy')
-uniDis=dissimilarity(uniTDM, method="cosine")
-uniDis<-pr_dist2simil(uniTDM)
-#the dissimilarity is between documents
-#visualize the dissimilarity results to matrix, here we are just printing part of the big matrix
-as.matrix(dis)[1:10, 1:10]
-#visualize the dissimilarity results as a heatmap
-heatmap(as.matrix(dis)[1:50, 1:50])
-
-
-
-# calculate term frequencies 
-uniTDMfreq <- apply(uniTDM, 1, sum) 
-uniTDMfreq20 <- sort(uniTDMfreq, decreasing=TRUE)[1:20]
-qplot(names(uniTDMfreq20),uniTDMfreq20, geom='bar', main=" Term Frequencies", xlab="Terms",ylab= "counts" ,stat="identity") + coord_flip()
-
-# get the matching tweets for the most frequent word 
-inspect(tweetsCorpus[apply(tweetsTDM[names(tweetsFrequentWords[1])], 1, function(x) x > 0)]) 
-
-install.packages('slam')
 library('slam')
-
 uniTDMfreq <- rowapply_simple_triplet_matrix(uniTDM,sum)
+biTDMfreq <- rowapply_simple_triplet_matrix(biTDM,sum)
+triTDMfreq <- rowapply_simple_triplet_matrix(triTDM,sum)
+quadTDMfreq <- rowapply_simple_triplet_matrix(quadTDM,sum)
+
+##Top 20 graphs
+
+#uni
+uniTDMfreq20 <- sort(uniTDMfreq, decreasing=TRUE)[1:20]
+# y-axis
+uniLevels<-names(uniTDMfreq20)
+qplot(uniLevels,uniTDMfreq20, geom='bar', main="1-Gram Term Frequencies", xlab="Terms",ylab= "counts" ,stat="identity") + coord_flip()
+ggsave(filename="./data/uniTDMfreq20.png", width = 4, height=4, dpi=100)
+
+
+#bi
+biTDMfreq20 <- sort(biTDMfreq, decreasing=TRUE)[1:20]
+# y-axis
+biLevels<-names(biTDMfreq20)
+qplot(biLevels,biTDMfreq20, geom='bar', main="2-Gram Term Frequencies", xlab="Terms",ylab= "counts" ,stat="identity") + coord_flip()
+ggsave(filename="./data/biTDMfreq20.png", width = 4, height=4, dpi=100)
+
+#tri
+triTDMfreq20 <- sort(triTDMfreq, decreasing=TRUE)[1:20]
+# y-axis
+triLevels<-names(triTDMfreq20)
+qplot(triLevels,triTDMfreq20, geom='bar', main="3-Gram Term Frequencies", xlab="Terms",ylab= "counts" ,stat="identity") + coord_flip()
+ggsave(filename="./data/triTDMfreq20.png", width = 4, height=4, dpi=100)
+
+#quad
+quadTDMfreq20 <- sort(quadTDMfreq, decreasing=TRUE)[1:20]
+# y-axis
+quadLevels<-names(quadTDMfreq20)
+qplot(quadLevels,quadTDMfreq20, geom='bar', main="4-Gram Term Frequencies", xlab="Terms",ylab= "counts" ,stat="identity") + coord_flip()
+ggsave(filename="./data/quadTDMfreq20.png", width = 4, height=4, dpi=100)
+
+

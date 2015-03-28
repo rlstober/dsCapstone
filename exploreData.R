@@ -95,7 +95,7 @@ newsWordsM <- as.matrix(summary(newsWords))
   #Build table
   wordsDF<-as.data.frame(cbind(blogWordsM, twitterWordsM,newsWordsM))
   names(wordsDF)<-fileSources
-  #(wordsDF)
+  (wordsDF)
 
 
 ## Save all this work
@@ -120,14 +120,17 @@ save(wordsDF,file=savewordsDF)
 
 #plot
 
-blogPlot<-qplot(blogWords, xlab="Words per Line", ylab="Frequency of Count", main="Blog Word Frequency",xlim=c(0,200), binwidth=1)
+bPlot<-qplot(blogWords, xlab="Words per Line", ylab="Frequency of Count", main="Blog Word Frequency",xlim=c(0,200), binwidth=1)
 ggsave(filename="./data/blogWords.png", blogPlot,width = 4, height=4, dpi=100)
 
-qplot(twitterWords, xlab="Words per Line", ylab="Frequency of Count", main="Twitter Word Frequency",xlim=c(0,200), binwidth=1)
+tPlot<-qplot(twitterWords, xlab="Words per Line", ylab="Frequency of Count", main="Twitter Word Frequency",xlim=c(0,200), binwidth=1)
 ggsave(filename="./data/twitterWords.png", width = 4, height=4, dpi=100)
 
-qplot(newsWords, xlab="Words per Line", ylab="Frequency of Count", title="News Word frequency",xlim=c(0,200), binwidth=1)
+nPlot<-qplot(newsWords, xlab="Words per Line", ylab="Frequency of Count", main="News Word Frequency",xlim=c(0,200), binwidth=1)
 ggsave(filename="./data/newsWords.png", width = 4, height=4, dpi=100)
+
+grid.arrange(bPlot,tPlot,nPlot, ncol = 3)
+ggsave(filename="./data/allWords.png", width = 4, height=4, dpi=100)
 
 
 ##Sampling
@@ -144,4 +147,4 @@ sampSize<-10000
 saveFileSample(blogData,blogSave,sampSize)
 saveFileSample(twitterData,twitterSave,sampSize)
 saveFileSample(newsData,newsSave,sampSize)
-
+ls()
