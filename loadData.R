@@ -92,4 +92,3 @@ twitterData[biostats]
 sum(grepl("A computer once beat me at chess, but it was no match for me at kickboxing", twitterData))
 #3
 
-

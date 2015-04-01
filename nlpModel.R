@@ -1,30 +1,19 @@
 #NLP Model
-
+# rm(list=ls())
 library(tm)
 library(RWeka)
 library(SnowballC)
 library(ggplot2)
-
-##Load Sample Data
-
-# Sample File names
-load("./data/blogsSamp.RData")
-load("./data/twitterSamp.RData")
-load("./data/newsSamp.RData")
-
-
-load(blogSave)
-load(twitterSave)
-newsLoad<-load(newsSave)
+library(slam)
 
 # create corpus from directory folder sampleData
 txt<-"./sampleData"
 (myCorpus <- Corpus(DirSource(txt),readerControl = list(reader=readPlain, language = "en",load = TRUE)))
 
 
-summary(myCorpus)
-inspect(myCorpus)
-myCorpus[[3]]
+#summary(myCorpus)
+#inspect(myCorpus)
+#myCorpus[[3]]
 
 
 #Remove standard english stop words from a text document.
@@ -35,7 +24,7 @@ mystopwords <- c("fuck", "piss", "shit", "cunt", "cocksucker", "motherfucker", "
 tm_map(myCorpus, removeWords, mystopwords)
 
 ##Remove punctuation from a text document.
-tm_map(myCorpus, FUN = "removePunctuation")
+#tm_map(myCorpus, FUN = "removePunctuation")
 
 #Remove numbers from a text document.
 tm_map(myCorpus, FUN = "removeNumbers")
@@ -47,7 +36,7 @@ tm_map(myCorpus, FUN = "stripWhitespace")
 #tm_map(myCorpus, stemDocument)
 
 # term document matrix
-myCorpusTDM <- TermDocumentMatrix(myCorpus, control = list(removePunctuation = TRUE,removeNumbers = TRUE, stopwords = mystopwords))
+myCorpusTDM <- TermDocumentMatrix(myCorpus, control = list(removeNumbers = TRUE, stopwords = mystopwords))
 inspect(myCorpusTDM)
 str(myCorpusTDM)
 
@@ -73,10 +62,10 @@ triToken <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
 quadToken <- function(x) NGramTokenizer(x, Weka_control(min = 4, max = 4)) 
 
 # tokenize 
-uniTDM<- TermDocumentMatrix(myCorpus, control = list(removePunctuation = TRUE,removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = uniToken))
-biTDM<- TermDocumentMatrix(myCorpus, control = list(removePunctuation = TRUE,removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = biToken))
-triTDM<- TermDocumentMatrix(myCorpus, control = list(removePunctuation = TRUE,removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = triToken))
-quadTDM<- TermDocumentMatrix(myCorpus, control = list(removePunctuation = TRUE,removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = quadToken))
+uniTDM<- TermDocumentMatrix(myCorpus, control = list(removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = uniToken))
+biTDM<- TermDocumentMatrix(myCorpus, control = list(removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = biToken))
+triTDM<- TermDocumentMatrix(myCorpus, control = list(removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = triToken))
+quadTDM<- TermDocumentMatrix(myCorpus, control = list(removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = quadToken))
 
 findFreqTerms(uniTDM, 1000)
 findFreqTerms(biTDM, 500)
@@ -111,7 +100,7 @@ inspect(uniTDM[1:20, 1:3])
 df <- as.data.frame(inspect(quadTDM))
 
 # aggregate rows 
-library('slam')
+
 uniTDMfreq <- rowapply_simple_triplet_matrix(uniTDM,sum)
 biTDMfreq <- rowapply_simple_triplet_matrix(biTDM,sum)
 triTDMfreq <- rowapply_simple_triplet_matrix(triTDM,sum)

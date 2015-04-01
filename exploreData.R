@@ -1,6 +1,8 @@
 #Explore Data
 #Has the data scientist done basic summaries of the three files? Word counts, line counts and basic data tables?
 #Has the data scientist made basic plots, such as histograms to illustrate features of the data?
+# rm(list=ls())
+
 library(stringi)
 library(ggplot2)
 
@@ -42,6 +44,25 @@ twitterData<-readFiles(twitterFile,openMode)
 openMode<- "rb"
 newsData<-readFiles(newsFile,openMode)
 
+##Clean it up for further processing
+cleanText<-function(myText){
+  resultText <- stri_trans_tolower(myText)
+  #replace new lines with space
+  resultText <- stri_replace_all_regex(resultText,'\032','')
+  #remove unicode
+  resultText <- stri_enc_toascii(resultText)
+  #remove end of sentence characters
+  resultText <- stri_replace_last_regex(resultText,'[/.,/?/!]','')
+  return(resultText)
+}
+
+blogData<-cleanText(blogData)
+twitterData<-cleanText(twitterData)
+newsData<-cleanText(newsData)
+
+#sum(grepl("a.m.", twitterData))
+
+
 ## Get descriptive data
 
 # file sizes
@@ -69,7 +90,8 @@ fileDFnames<-c("Data Source","File Size (Mb)", "Number of Lines", "Characters pe
 
 fileDF<-data.frame(fileSources,fileSizeMb,fileLines,fileMCL)
 names(fileDF)<-fileDFnames
-rm(z)
+
+
 
 ## word stats
 
@@ -98,30 +120,20 @@ newsWordsM <- as.matrix(summary(newsWords))
   (wordsDF)
 
 
-## Save all this work
-
-
+## Save data tables
 #File names
-blogSave<-"./data/blogs.RData"
-twitterSave<-"./data/twitter.RData"
-newsSave<-"./data/news.RData"
 savefileDF<-"./data/fileDF.RData"
 savestatsDF<-"./data/statsDF.RData"
 savewordsDF<-"./data/wordsDF.RData"
-
-
-save(blogData,file=blogSave)
-save(twitterData,file=twitterSave)
-save(newsData,file=newsSave)
+#save
 save(fileDF,file=savefileDF)
 save(statsDF,file=savestatsDF)
 save(wordsDF,file=savewordsDF)
 
-
 #plot
 
 bPlot<-qplot(blogWords, xlab="Words per Line", ylab="Frequency of Count", main="Blog Word Frequency",xlim=c(0,200), binwidth=1)
-ggsave(filename="./data/blogWords.png", blogPlot,width = 4, height=4, dpi=100)
+ggsave(filename="./data/blogWords.png", width = 4, height=4, dpi=100)
 
 tPlot<-qplot(twitterWords, xlab="Words per Line", ylab="Frequency of Count", main="Twitter Word Frequency",xlim=c(0,200), binwidth=1)
 ggsave(filename="./data/twitterWords.png", width = 4, height=4, dpi=100)
@@ -147,4 +159,21 @@ sampSize<-10000
 saveFileSample(blogData,blogSave,sampSize)
 saveFileSample(twitterData,twitterSave,sampSize)
 saveFileSample(newsData,newsSave,sampSize)
-ls()
+
+## Save data tables
+
+
+#File names
+blogSave<-"./data/blogs.RData"
+twitterSave<-"./data/twitter.RData"
+newsSave<-"./data/news.RData"
+
+
+save(blogData,file=blogSave)
+save(twitterData,file=twitterSave)
+save(newsData,file=newsSave)
+
+# save all in one file
+englishSave<-"./data/englishText.RData"
+englishData<-c(blogData,twitterData, newsData)
+save(englishData,file=englishSave)

@@ -39,7 +39,24 @@ library(slam)
 
 ## Data Files
 
-Files were downloaded and unzipped. The English locales files were read. We took a look at file sizes, number of words and characters per lines to get an overall sense of the datasets. The data shows sight differences due to sources.
+Files were downloaded and unzipped. 
+
+```{r eval=FALSE}
+## Download process
+#destFile <- "./data/Coursera-SwiftKey.zip"
+#sourceFile <- "http://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip"
+#download.file(sourceFile, destFile)
+#unzip(destFile)
+```
+
+The English locales files were read. We took a look at file sizes, number of words and characters per lines to get an overall sense of the datasets. The data shows sight differences due to sources.
+
+Some cleanup was performed at this point.
+
+  1. Text was converted to lower
+  2. Text was converted to unicode
+  3. New line characters were removed.
+  4. End of sentence pronunciation ws removed.
 
 The Blog is the largest dataset. It does so even though it has the fewest lines, by also having the max characters per line yet. Conversely, twitter the smallest dataset has the most lines but fewest characters per line. Twitter likely has the fewest characters per line due to its 140 character limit. The length of a news line is slightly less than a blog, which may reflect a need of brevity in reporting stories, not present in blogs.
 
@@ -82,9 +99,8 @@ The graphs below further illustrate the different profiles of the data sets.
 In this step we create a Term Document Matrix (TDM) from the three documents. We built a corpus based on 10,000 line samples from each text source. Preprocessing steps in creation of the TDM included:
 
   1. Remove extra whitespace
-  2. Remove pronunciation
-  3. Remove profanity
-  4. Remove numbers
+  2. Remove profanity (as per George Carlin)
+  3. Remove numbers
 
 Below is a summary of word counts for 1-4 N-grams.
 
@@ -111,6 +127,8 @@ The following histograms show the top 20 words in the n-grams.
 The source data comes from three distinct data sets, Based on an exploration of that data it seems an ideal predictor would utilize different models depending on the source. As that i beyond the scope of this project, our predictor will not make any assumptions about the source of the data.
 
 Our predictive model will be based off the n-grams created. This would utilizing a lookup table based on frequency. Markov chains would be used to efficiently store the n-grams. Emphasis will be running fast predictions using limited memory. Back off models will need to be employed for unobserved n-grams.
+
+Data will be split into Training and Testing sets to help determine better predictive models. Some measure of accuracy will be employed. We may also look into Perplexity as a meause fo model quality.
 
 The shiny app will mimic the Swiftkey application. Based on an input of 1-3 words, the application will suggest three words for the user to choose from. 
 
