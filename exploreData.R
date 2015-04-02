@@ -2,6 +2,7 @@
 #Has the data scientist done basic summaries of the three files? Word counts, line counts and basic data tables?
 #Has the data scientist made basic plots, such as histograms to illustrate features of the data?
 # rm(list=ls())
+gc()
 
 library(stringi)
 library(ggplot2)
@@ -53,8 +54,20 @@ cleanText<-function(myText){
   resultText <- stri_enc_toascii(resultText)
   #remove end of sentence characters
   resultText <- stri_replace_last_regex(resultText,'[/.,/?/!]','')
+  # multipl,e spaces
+  resultText<-stri_trim_both(resultText, pattern = "\\P{Wspace}")
+  #remove am and pm characters
+  resultText <- stri_replace_last_regex(resultText,'a m','a.m.')
+  resultText <- stri_replace_last_regex(resultText,'p m','p.m.')
+  #remove numbers
+  #resultText <- stri_replace_last_regex(resultText,'[0-9]+','')
+  #remove profanity
+  resultText <- stri_replace_last_regex(resultText,'["fuck", "piss", "shit", "cunt", "cocksucker", "motherfucker", "tits"]','')
   return(resultText)
 }
+
+
+#resultText<-c("a m ", "friday13", "TTT","fuck you", "goodbye.", "hello?", "b   x")
 
 blogData<-cleanText(blogData)
 twitterData<-cleanText(twitterData)
@@ -90,7 +103,7 @@ fileDFnames<-c("Data Source","File Size (Mb)", "Number of Lines", "Characters pe
 
 fileDF<-data.frame(fileSources,fileSizeMb,fileLines,fileMCL)
 names(fileDF)<-fileDFnames
-
+(fileDF)
 
 
 ## word stats
@@ -101,7 +114,7 @@ newsDataStats<-as.matrix(stri_stats_latex(newsData))
 
 statsDF<-as.data.frame(cbind(blogDataStats, twitterDataStats,newsDataStats))
 names(statsDF)<-fileSources
-#(statsDF)
+(statsDF)
 
 
 ##Count words
@@ -147,18 +160,20 @@ ggsave(filename="./data/allWords.png", width = 4, height=4, dpi=100)
 
 ##Sampling
 
-saveFileSample <- function(x,y,n){z<-sample(x,n);save(z, file = y)}
-# Sample File names
-blogSave<-"./data/blogsSamp.RData"
-twitterSave<-"./data/twitterSamp.RData"
-newsSave<-"./data/newsSamp.RData"
-
-#
 set.seed<-12345
-sampSize<-10000
-saveFileSample(blogData,blogSave,sampSize)
-saveFileSample(twitterData,twitterSave,sampSize)
-saveFileSample(newsData,newsSave,sampSize)
+sampSize<-.01
+blogDataSampleLogic<-rbinom(length(blogData),1,sampSize)
+twitterDataSampleLogic<-rbinom(length(twitterData),1,sampSize)
+newsDataSampleLogic<-rbinom(length(newsData),1,sampSize)
+
+
+set.seed<-12345
+sampSize<-1000
+blogDataSample<-sample(blogData,length(blogData)*.01)
+twitterDataSample<-sample(twitterData,length(twitterData)*.01)
+newsDataSample<-sample(newsData,length(newsData)*.01)
+
+
 
 ## Save data tables
 
@@ -168,12 +183,43 @@ blogSave<-"./data/blogs.RData"
 twitterSave<-"./data/twitter.RData"
 newsSave<-"./data/news.RData"
 
+# Sample File names
+blogSaveSamp<-"./sampleData/blogsSamp.RData"
+twitterSaveSamp<-"./sampleData/twitterSamp.RData"
+newsSaveSamp<-"./sampleData/newsSamp.RData"
 
 save(blogData,file=blogSave)
 save(twitterData,file=twitterSave)
 save(newsData,file=newsSave)
 
+save(blogDataSample,file=blogSaveSamp)
+save(twitterDataSample,file=twitterSaveSamp)
+save(newsDataSample,file=newsSaveSamp)
+
 # save all in one file
 englishSave<-"./data/englishText.RData"
 englishData<-c(blogData,twitterData, newsData)
 save(englishData,file=englishSave)
+
+englishSaveSample<-"./data/englishTextSample.RData"
+save(blogDataSample,twitterDataSample, newsDataSample,file=englishSaveSample)
+
+
+# Sample connections
+blogCon<-file("./sampleData/blogsSamp.txt")
+twitterCon<-file("./sampleData/twitterSamp.txt")
+newsCon<-file("./sampleData/newsSamp.txt")
+
+
+writeLines(blogDataSample, blogCon);close(blogCon)
+writeLines(newsDataSample, newsCon);close(newsCon)
+writeLines(twitterDataSample, twitterCon);close(twitterCon)
+
+
+load(blogSaveSamp)
+load(twitterSaveSamp)
+load(newsSaveSamp)
+
+load(blogSave)
+load(twitterSave)
+load(newsSave)

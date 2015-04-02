@@ -1,59 +1,35 @@
 #NLP Model
-# rm(list=ls())
+# rm(list=ls()); gc()
 library(tm)
 library(RWeka)
 library(SnowballC)
 library(ggplot2)
 library(slam)
 
-# create corpus from directory folder sampleData
+##load sample data
+englishSaveSample<-"./data/englishTextSample.RData"
+load(englishSaveSample)
+
+blogCorpus<-VCorpus(DataframeSource(data.frame(blogDataSample)))
+twitterCorpus<-VCorpus(DataframeSource(data.frame(twitterDataSample)))
+newsCorpus<-VCorpus(DataframeSource(data.frame(newsDataSample)))
+
+englishCorpus<-c(blogCorpus,twitterCorpus,newsCorpus)
+
+inspect(blogCorpus[1:2])
+
+
+
 txt<-"./sampleData"
 (myCorpus <- Corpus(DirSource(txt),readerControl = list(reader=readPlain, language = "en",load = TRUE)))
+inspect(myCorpus[1:2])
+
+myCorpusTDM <- TermDocumentMatrix(englishCorpus)
+uniTDMsparse<-removeSparseTerms(myCorpusTDM, 0.67)
+
+str(myCorpus)
 
 
-#summary(myCorpus)
-#inspect(myCorpus)
-#myCorpus[[3]]
-
-
-#Remove standard english stop words from a text document.
-#tm_map(myCorpus, removeWords, stopwords("english"))
-
-#Remove profanity
-mystopwords <- c("fuck", "piss", "shit", "cunt", "cocksucker", "motherfucker", "tits")
-tm_map(myCorpus, removeWords, mystopwords)
-
-##Remove punctuation from a text document.
-#tm_map(myCorpus, FUN = "removePunctuation")
-
-#Remove numbers from a text document.
-tm_map(myCorpus, FUN = "removeNumbers")
-
-#Strip extra whitespace from a text document. Multiple whitespace characters are collapsed to a single blank
-tm_map(myCorpus, FUN = "stripWhitespace")
-
-#Stem words in a text document using Porter's stemming algorithm.
-#tm_map(myCorpus, stemDocument)
-
-# term document matrix
-myCorpusTDM <- TermDocumentMatrix(myCorpus, control = list(removeNumbers = TRUE, stopwords = mystopwords))
-inspect(myCorpusTDM)
-str(myCorpusTDM)
-
-findFreqTerms(myCorpusTDM, 100)
-
-findAssocs(myCorpusTDM, "a case of", .67)
-
-sum(grepl("of", myCorpusTDM))
-
-findAssocs(myCorpusTDM, "weather", .99)
-
-
-myCorpusTDMsparse<-removeSparseTerms(myCorpusTDM, 0.4)
-inspect(myCorpusTDMsparse)
-
-
-## tokenizers
 
 #set up tokenizer functions from Rweka
 uniToken <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 1)) 
@@ -61,16 +37,32 @@ biToken <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
 triToken <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3)) 
 quadToken <- function(x) NGramTokenizer(x, Weka_control(min = 4, max = 4)) 
 
-# tokenize 
-uniTDM<- TermDocumentMatrix(myCorpus, control = list(removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = uniToken))
-biTDM<- TermDocumentMatrix(myCorpus, control = list(removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = biToken))
-triTDM<- TermDocumentMatrix(myCorpus, control = list(removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = triToken))
-quadTDM<- TermDocumentMatrix(myCorpus, control = list(removeNumbers = TRUE, stopwords = mystopwords, removeWhitespace = TRUE, tokenizer = quadToken))
+sparsity<-.67
 
-findFreqTerms(uniTDM, 1000)
+# tokenize 
+uniTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = uniToken))
+biTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = biToken))
+triTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = triToken))
+quadTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = quadToken))
+
+
+#clear up some mem
+rm(blogCorpus)
+rm(newsCorpus)
+rm(twitterCorpus)
+
+rm(blogDataSample)
+rm(newsDataSample)
+rm(twitterDataSample)
+
+rm(englishCorpus)
+gc()
+
+
+findFreqTerms(uniTDM, 500)
 findFreqTerms(biTDM, 500)
 findFreqTerms(triTDM, 100)
-findFreqTerms(quadTDM, 50)
+findFreqTerms(quadTDM, 1)
 
 # aggregate columns 
 uniAggregate<-colSums(as.matrix(uniTDM))
@@ -96,7 +88,7 @@ save(ngramMat,file="./data/nGramMat.RData")
 inspect(quadTDM[1:100, 1:3])
 inspect(triTDM[130:200, 1:3])
 inspect(biTDM[130:200, 1:3])
-inspect(uniTDM[1:20, 1:3])
+inspect(uniTDM[1, 1])
 df <- as.data.frame(inspect(quadTDM))
 
 # aggregate rows 
@@ -138,3 +130,6 @@ qplot(quadLevels,quadTDMfreq20, geom='bar', main="4-Gram Term Frequencies", xlab
 ggsave(filename="./data/quadTDMfreq20.png", width = 4, height=4, dpi=100)
 
 
+
+library(data.table)
+uniDF<-as.data.table(uniTDM)

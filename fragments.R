@@ -89,3 +89,45 @@ newsSampStats<-stri_stats_latex(newsDataSamp)
 # create corpus from directory folder sampleData
 txt<-"./sampleData"
 (myCorpus <- Corpus(DirSource(txt),readerControl = list(reader=readPlain, language = "en",load = TRUE)))
+
+
+#summary(myCorpus)
+#inspect(myCorpus)
+#myCorpus[[3]]
+
+
+#Remove standard english stop words from a text document.
+#tm_map(myCorpus, removeWords, stopwords("english"))
+
+#Remove profanity
+mystopwords <- c("fuck", "piss", "shit", "cunt", "cocksucker", "motherfucker", "tits")
+tm_map(myCorpus, removeWords, mystopwords)
+
+##Remove punctuation from a text document.
+#tm_map(myCorpus, FUN = "removePunctuation")
+
+#Remove numbers from a text document.
+tm_map(myCorpus, FUN = "removeNumbers")
+
+#Strip extra whitespace from a text document. Multiple whitespace characters are collapsed to a single blank
+tm_map(myCorpus, FUN = "stripWhitespace")
+
+#Stem words in a text document using Porter's stemming algorithm.
+#tm_map(myCorpus, stemDocument)
+
+# term document matrix
+myCorpusTDM <- TermDocumentMatrix(myCorpus, control = list(removeNumbers = TRUE, stopwords = mystopwords))
+inspect(myCorpusTDM)
+str(myCorpusTDM)
+
+findFreqTerms(myCorpusTDM, 100)
+
+findAssocs(myCorpusTDM, "a case of", .67)
+
+sum(grepl("of", myCorpusTDM))
+
+findAssocs(myCorpusTDM, "weather", .99)
+
+
+myCorpusTDMsparse<-removeSparseTerms(myCorpusTDM, 0.4)
+inspect(myCorpusTDMsparse)
