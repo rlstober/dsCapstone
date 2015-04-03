@@ -1,4 +1,5 @@
 #Quizzes 2 and 3
+rm(list=ls()); gc()
 library(stringi)
 library(tm)
 library(RWeka)
@@ -147,3 +148,30 @@ sumTDM["insane"]
 sumTDM["insensitive"]
 sumTDM["asleep"]
 sumTDM["callous"]
+
+
+
+
+#qUIZ 3
+#Q3
+#make  corpus based on phrase 
+phrase1<-'arctic monkeys'
+phrase2<-'arctic monkeys'
+qCorpus<-wordCorpus(phrase1)
+qTDM <- triTDM(qCorpus)
+inspect(qTDM[500:600,])
+#No match try unigrams
+
+qTDM<-TermDocumentMatrix(qCorpus, control = list(removePunctuation = TRUE,removeNumbers = TRUE, removeWhitespace = TRUE, stopwords=TRUE))
+mTDM = as.matrix(qTDM)
+
+
+#get logical vector of trigrams with case of
+select <- qTDM$dimnames$Terms[grepl(phrase2,qTDM$dimnames$Terms)]
+# get rows that match phrase
+mTDM = as.matrix(qTDM[select,])
+sumTDM = sort(rowSums(mTDM), decreasing = TRUE)
+sumTDM["die"]
+sumTDM["sleep"]
+sumTDM["give"]
+sumTDM["eat"]

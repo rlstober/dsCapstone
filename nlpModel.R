@@ -16,36 +16,6 @@ newsCorpus<-VCorpus(DataframeSource(data.frame(newsDataSample)))
 
 englishCorpus<-c(blogCorpus,twitterCorpus,newsCorpus)
 
-inspect(blogCorpus[1:2])
-
-
-
-txt<-"./sampleData"
-(myCorpus <- Corpus(DirSource(txt),readerControl = list(reader=readPlain, language = "en",load = TRUE)))
-inspect(myCorpus[1:2])
-
-myCorpusTDM <- TermDocumentMatrix(englishCorpus)
-uniTDMsparse<-removeSparseTerms(myCorpusTDM, 0.67)
-
-str(myCorpus)
-
-
-
-#set up tokenizer functions from Rweka
-uniToken <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 1)) 
-biToken <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2)) 
-triToken <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3)) 
-quadToken <- function(x) NGramTokenizer(x, Weka_control(min = 4, max = 4)) 
-
-sparsity<-.67
-
-# tokenize 
-uniTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = uniToken))
-biTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = biToken))
-triTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = triToken))
-quadTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = quadToken))
-
-
 #clear up some mem
 rm(blogCorpus)
 rm(newsCorpus)
@@ -55,6 +25,33 @@ rm(blogDataSample)
 rm(newsDataSample)
 rm(twitterDataSample)
 
+gc()
+
+
+
+
+#set up tokenizer functions from Rweka
+uniToken <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 1)) 
+biToken <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2)) 
+triToken <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3)) 
+quadToken <- function(x) NGramTokenizer(x, Weka_control(min = 4, max = 4)) 
+
+sparsity<-.8
+
+# tokenize 
+uniTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = uniToken))
+biTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = biToken))
+triTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = triToken))
+quadTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = quadToken))
+
+
+#save
+save(uniTDM, file="./data/uniTDM.RData")
+save(biTDM, file="./data/biTDM.RData")
+save(triTDM, file="./data/triTDM.RData")
+save(quadTDM, file="./data/quadTDM.RData")
+
+#clear up some mem
 rm(englishCorpus)
 gc()
 
@@ -62,9 +59,10 @@ gc()
 findFreqTerms(uniTDM, 500)
 findFreqTerms(biTDM, 500)
 findFreqTerms(triTDM, 100)
-findFreqTerms(quadTDM, 1)
+findFreqTerms(quadTDM, 50)
 
 # aggregate columns 
+
 uniAggregate<-colSums(as.matrix(uniTDM))
 biAggregate<-colSums(as.matrix(biTDM))
 triAggregate<-colSums(as.matrix(triTDM))
@@ -97,6 +95,12 @@ uniTDMfreq <- rowapply_simple_triplet_matrix(uniTDM,sum)
 biTDMfreq <- rowapply_simple_triplet_matrix(biTDM,sum)
 triTDMfreq <- rowapply_simple_triplet_matrix(triTDM,sum)
 quadTDMfreq <- rowapply_simple_triplet_matrix(quadTDM,sum)
+
+#save
+save(uniTDMfreq, file="./data/uniTDMfreq.RData")
+save(biTDMfreq, file="./data/biTDMfreq.RData")
+save(triTDMfreq, file="./data/triTDMfreq.RData")
+save(quadTDMfreq, file="./data/quadTDMfreq.RData")
 
 ##Top 20 graphs
 
