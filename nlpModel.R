@@ -44,12 +44,14 @@ biTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=spars
 triTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = triToken))
 quadTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = quadToken))
 
+uniTDMnonstop<- TermDocumentMatrix(englishCorpus, list(weighting = function(x)weightTfIdf(x, normalize =FALSE),stopwords = TRUE,removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = uniToken))
 
 #save
 save(uniTDM, file="./data/uniTDM.RData")
 save(biTDM, file="./data/biTDM.RData")
 save(triTDM, file="./data/triTDM.RData")
 save(quadTDM, file="./data/quadTDM.RData")
+save(uniTDMnonstop, file="./data/uniTDMnonstop.RData")
 
 #clear up some mem
 rm(englishCorpus)
@@ -60,6 +62,7 @@ findFreqTerms(uniTDM, 500)
 findFreqTerms(biTDM, 500)
 findFreqTerms(triTDM, 100)
 findFreqTerms(quadTDM, 50)
+findFreqTerms(uniTDMnonstop, 5000)
 
 # aggregate columns 
 
@@ -95,6 +98,23 @@ uniTDMfreq <- rowapply_simple_triplet_matrix(uniTDM,sum)
 biTDMfreq <- rowapply_simple_triplet_matrix(biTDM,sum)
 triTDMfreq <- rowapply_simple_triplet_matrix(triTDM,sum)
 quadTDMfreq <- rowapply_simple_triplet_matrix(quadTDM,sum)
+
+library(data.table)
+#aggregate word counts
+uniTDMnonstopfreq <- sort(rowapply_simple_triplet_matrix(uniTDMnonstop,sum), decreasing = TRUE)
+# set up data table
+uniTDMnonstopDT<-as.data.table(names(uniTDMnonstopfreq))
+# add counts
+uniTDMnonstopDT$count<-uniTDMnonstopfreq
+# how many distinct words
+uniTDMnonstopfreqLength<-length(uniTDMnonstopfreq)
+# total words
+uniTDMnonstopfreqTotal<-sum(uniTDMnonstopfreq)
+# relative frequency
+uniTDMnonstopfreq$relativeFreq<-(uniTDMnonstopfreq$uniTDMnonstopfreq)
+uniTDMnonstopfreqCumsum<-cumsum(uniTDMnonstopfreq)
+uniTDMnonstopfreqDF<-as.data.table(uniTDMnonstopfreq)
+uniTDMnonstopfreqDF$cumsum<-cumsum(uniTDMnonstopfreq)
 
 #save
 save(uniTDMfreq, file="./data/uniTDMfreq.RData")

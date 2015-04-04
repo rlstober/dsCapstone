@@ -131,3 +131,14 @@ findAssocs(myCorpusTDM, "weather", .99)
 
 myCorpusTDMsparse<-removeSparseTerms(myCorpusTDM, 0.4)
 inspect(myCorpusTDMsparse)
+
+
+set.seed<-12345
+sampSize<-.01
+blogDataSampleLogic<-rbinom(length(blogData),1,sampSize)
+twitterDataSampleLogic<-rbinom(length(twitterData),1,sampSize)
+newsDataSampleLogic<-rbinom(length(newsData),1,sampSize)
+
+blogDataSample<-blogData[grep(1,blogDataSampleLogic)]
+twitterDataSample<-sample(twitterData,length(twitterData)*.01)
+newsDataSample<-sample(newsData,length(newsData)*.01)
