@@ -28,8 +28,6 @@ rm(twitterDataSample)
 gc()
 
 
-
-
 #set up tokenizer functions from Rweka
 uniToken <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 1)) 
 biToken <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2)) 
@@ -128,65 +126,6 @@ save(biTDMnonstopfreq, file="./data/biTDMnonstopfreq.RData")
 save(triTDMnonstopfreq, file="./data/triTDMnonstopfreq.RData")
 
 
-library(data.table)
-#aggregate word counts
-
-# set up data table
-#uniTDMnonstopDT<-as.data.table(names(uniTDMnonstopfreq))
-str(uniTDMnonstopDT)
-uniTDMnonstopDT<-as.data.table(uniTDMnonstopfreq,keep.rownames = TRUE)
-#better names
-oldNames<-names(uniTDMnonstopDT)
-newNames<-(c("Word", "Frequency"))
-setnames(uniTDMnonstopDT,oldNames,newNames)
-# add counts
-uniTDMnonstopDT$Count<-uniTDMnonstopfreq
-# how many distinct words
-uniTDMnonstopfreqLength<-length(uniTDMnonstopfreq)
-# total words
-uniTDMnonstopfreqTotal<-sum(uniTDMnonstopfreq)
-# relative frequency
-uniTDMnonstopDT$RelativeFrequency<-(uniTDMnonstopDT$Count/uniTDMnonstopfreqTotal)
-#cumulative frequency
-uniTDMnonstopDT$CumulativeFrequency<-cumsum(uniTDMnonstopDT$RelativeFrequency)
-#DISCOUNT
-uniTDMnonstopDT$AdjustedCount<-uniTDMnonstopDT$Count - 0.5
-
-object.size(uniTDMnonstopDT)
-
-xDTMf<-uniTDMnonstopfreq
-
-getDTMFreqDT<-function(xDTMf, adj){
-  # set up data table
-  xDT<-as.data.table(xDTMf,keep.rownames = TRUE)
-  #better names
-  oldNames<-names(xDTMf)
-  newNames<-(c("Word", "Frequency"))
-  setnames(xDT,oldNames,newNames)
-  # add counts
-  xDT$Count<-xDTMf
-  # how many distinct words
-  xDTlength<-length(xDTMf)
-  # total words
-  xDTtotal<-sum(xDTMf)
-  # relative frequency
-  xDT$RelativeFrequency<-(xDT$Count/xDTtotal)
-  #cumulative frequency
-  xDT$CumulativeFrequency<-cumsum(xDT$RelativeFrequency)
-  #DISCOUNT
-  xDT$AdjustedCount<-xDT$Count - adj
-  (object.size(uniTDMnonstopDT))
-  return(xDT)
-}
-
-uniTDMDT<-getDTMFreqDT(xDTMf=uniTDMfreq, adj=0.5)
-#save
-save(uniTDMfreq, file="./data/uniTDMfreq.RData")
-save(biTDMfreq, file="./data/biTDMfreq.RData")
-save(triTDMfreq, file="./data/triTDMfreq.RData")
-save(quadTDMfreq, file="./data/quadTDMfreq.RData")
-save(uniTDMnonstopfreq, file="./data/uniTDMnonstopfreq.RData")
-
 ##Top 20 graphs
 
 #uni
@@ -219,6 +158,3 @@ qplot(quadLevels,quadTDMfreq20, geom='bar', main="4-Gram Term Frequencies", xlab
 ggsave(filename="./data/quadTDMfreq20.png", width = 4, height=4, dpi=100)
 
 
-
-library(data.table)
-uniDF<-as.data.table(uniTDM)
