@@ -142,3 +142,31 @@ newsDataSampleLogic<-rbinom(length(newsData),1,sampSize)
 blogDataSample<-blogData[grep(1,blogDataSampleLogic)]
 twitterDataSample<-sample(twitterData,length(twitterData)*.01)
 newsDataSample<-sample(newsData,length(newsData)*.01)
+
+
+##Clean it up for further processing
+cleanText<-function(myText){
+  resultText <- stri_trans_tolower(myText)
+  #replace new lines with space
+  #resultText <- stri_replace_all_regex(resultText,'\032','')
+  #remove unicode
+  #resultText <- stri_enc_toascii(resultText)
+  #remove end of sentence characters
+  #resultText <- stri_replace_last_regex(resultText,'[/.,/?/!]','')
+  # multipl,e spaces
+  #resultText<-stri_trim_both(resultText, pattern = "\\P{Wspace}")
+  #remove am and pm characters
+  #resultText <- stri_replace_last_regex(resultText,'a m','a.m.')
+  #resultText <- stri_replace_last_regex(resultText,'p m','p.m.')
+  #remove numbers
+  #resultText <- stri_replace_last_regex(resultText,'[0-9]+','')
+  #remove profanity
+  resultText <- stri_replace_last_regex(resultText,'["fuck", "piss", "shit", "cunt", "cocksucker", "motherfucker", "tits"]','')
+  ## non-utf-8 characters
+  # drop non UTF-8 characters 
+  resultText <- iconv(resultText, from = "latin1", to = "UTF-8", sub="") 
+  resultText <- stri_replace_all_regex(resultText, "\u2019|`","'") 
+  resultText <- stri_replace_all_regex(resultText, "\u201c|\u201d|u201f|``",'"') 
+  return(resultText)
+}
+

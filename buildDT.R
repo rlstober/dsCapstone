@@ -11,7 +11,7 @@ library(data.table)
 load("./data/uniTDMfreq.RData")
 load("./data/biTDMfreq.RData")
 load("./data/triTDMfreq.RData")
-#save(quadTDMfreq, file="./data/quadTDMfreq.RData")
+
 #
 load("./data/uniTDMnonstopfreq.RData")
 load("./data/biTDMnonstopfreq.RData")

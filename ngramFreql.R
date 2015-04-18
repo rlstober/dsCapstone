@@ -72,6 +72,7 @@ findFreqTerms(triTDM, 100)
 findFreqTerms(quadTDM, 50)
 findFreqTerms(uniTDMnonstop, 5000)
 
+
 # aggregate columns 
 
 uniAggregate<-colSums(as.matrix(uniTDM))
