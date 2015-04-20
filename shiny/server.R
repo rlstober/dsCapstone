@@ -7,8 +7,8 @@
 
 library(shiny)
 default<-c("Excellent","Wonderful","Marvelous", "Intuitive","Amusing")
-load("./data/englishStop.RData")
-load("./data/uniTDMfreq.RData")
+#load("./data/englishStop.RData")
+#load("./data/uniTDMfreq.RData")
 deftin<-"This application is"
 defnw<-3
   
