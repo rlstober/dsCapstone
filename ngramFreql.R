@@ -34,18 +34,26 @@ biToken <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
 triToken <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3)) 
 quadToken <- function(x) NGramTokenizer(x, Weka_control(min = 4, max = 4)) 
 
-sparsity<-.8
+
 
 # tokenize 
-uniTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = uniToken))
+uniTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=.8, removeWhitespace = TRUE, tokenizer = uniToken))
 biTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = biToken))
 triTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = triToken))
-#quadTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = quadToken))
+quadTDM<- TermDocumentMatrix(englishCorpus, control = list(removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = quadToken))
+
+
+sparsity<-.998
+uniTDMsparse<-removeSparseTerms(uniTDM,sparsity)
+str(uniTDM)
+str(uniTDMsparse)
+inspect(uniTDMsparse[1,1:100])
+
 
 # get non stop words 
-uniTDMnonstop<- TermDocumentMatrix(englishCorpus, list(weighting = function(x)weightTfIdf(x, normalize =FALSE),stopwords = TRUE,removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = uniToken))
-biTDMnonstop<- TermDocumentMatrix(englishCorpus, list(weighting = function(x)weightTfIdf(x, normalize =FALSE),stopwords = TRUE,removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = biToken))
-triTDMnonstop<- TermDocumentMatrix(englishCorpus, list(weighting = function(x)weightTfIdf(x, normalize =FALSE),stopwords = TRUE,removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = triToken))
+# uniTDMnonstop<- TermDocumentMatrix(englishCorpus, list(weighting = function(x)weightTfIdf(x, normalize =FALSE),stopwords = TRUE,removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = uniToken))
+# biTDMnonstop<- TermDocumentMatrix(englishCorpus, list(weighting = function(x)weightTfIdf(x, normalize =FALSE),stopwords = TRUE,removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = biToken))
+# triTDMnonstop<- TermDocumentMatrix(englishCorpus, list(weighting = function(x)weightTfIdf(x, normalize =FALSE),stopwords = TRUE,removeSparseTerms=sparsity, removeWhitespace = TRUE, tokenizer = triToken))
 #identify stop words for later use
 englishStop<-stopwords("english")
 
@@ -53,12 +61,12 @@ englishStop<-stopwords("english")
 save(uniTDM, file="./data/uniTDM.RData")
 save(biTDM, file="./data/biTDM.RData")
 save(triTDM, file="./data/triTDM.RData")
-#save(quadTDM, file="./data/quadTDM.RData")
+save(quadTDM, file="./data/quadTDM.RData")
 #
-save(uniTDMnonstop, file="./data/uniTDMnonstop.RData")
-save(biTDMnonstop, file="./data/biTDMnonstop.RData")
-save(triTDMnonstop, file="./data/triTDMnonstop.RData")
-save(englishStop, file="./data/englishStop.RData")
+# save(uniTDMnonstop, file="./data/uniTDMnonstop.RData")
+# save(biTDMnonstop, file="./data/biTDMnonstop.RData")
+# save(triTDMnonstop, file="./data/triTDMnonstop.RData")
+# save(englishStop, file="./data/englishStop.RData")
 
 #clear up some mem
 rm(englishCorpus)
@@ -108,7 +116,7 @@ df <- as.data.frame(inspect(quadTDM))
 uniTDMfreq <- sort(rowapply_simple_triplet_matrix(uniTDM,sum), decreasing = TRUE)
 biTDMfreq <- rowapply_simple_triplet_matrix(biTDM,sum)
 triTDMfreq <- rowapply_simple_triplet_matrix(triTDM,sum)
-#quadTDMfreq <- rowapply_simple_triplet_matrix(quadTDM,sum)
+quadTDMfreq <- rowapply_simple_triplet_matrix(quadTDM,sum)
 #
 uniTDMnonstopfreq <- sort(rowapply_simple_triplet_matrix(uniTDMnonstop,sum), decreasing = TRUE)
 biTDMnonstopfreq <- sort(rowapply_simple_triplet_matrix(biTDMnonstop,sum), decreasing = TRUE)

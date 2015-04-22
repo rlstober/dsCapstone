@@ -6,6 +6,7 @@
 #
 
 library(shiny)
+library(stringi)
 default<-c("Excellent","Wonderful","Marvelous", "Intuitive","Amusing")
 #load("./data/englishStop.RData")
 #load("./data/uniTDMfreq.RData")
@@ -46,6 +47,7 @@ defnw<-3
     #if (sz!=1) g1<-rbind(g1,(sample(englishStop,1)))
   })
   
+  output$vin
   
   })
 

@@ -5,8 +5,10 @@ install.packages('devtools')
 # http://www.rstudio.com/shiny/
 #
 
+cat(sprintf("Total memory=%.2f MB\n", memory.size()))
+
 library(shiny)
-library(shinyapps)
+#library(shinyapps)
 
 shinyUI(fluidPage(
   
