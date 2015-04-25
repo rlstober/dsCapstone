@@ -1,0 +1,16 @@
+{
+    "contents" : "# This is the user-interface definition of a Shiny web application.\n# You can find out more about building applications with Shiny here:\n# \n# http://www.rstudio.com/shiny/\n#\n\n# cat(sprintf(\"Total memory=%.2f MB\\n\", memory.size()))\n\nlibrary(shiny)\n\nshinyUI(fluidPage(\n  \n  # Application title\n  div(titlePanel(\"Predict Words\"), style = \"color:blue\"),\n  #titlePanel(\"Text Predicition\"),\n  \n  # Sidebar with a slider input for number of bins\n  sidebarPanel(\n    #uiOutput('resetable_input'),\n    h4('The application will attempt to predict the next word to be typed'),\n    br(),\n    \n    radioButtons(\"nw\", label = h4(\"Set the Number of Single Word Predictions\"),\n                 choices = list(\"One\" = 1, \"Three\" = 3,\n                             \"Five\" = 5),selected = 3),  \n    textInput('tin',\n                label=h4('Enter an incomplete phrase below'),\n                value = \"This application is\"),\n    h4('Hit the Predict button to update the prediction or Reset to start over'), \n    #actionButton(\"predictButton\", label = \"Predict\", icon = icon(\"question\",  lib = \"font-awesome\")),\n    #actionButton(\"reset_input\", label = \"Reset\", icon = icon(\"refresh\",  lib = \"font-awesome\")),\n    radioButtons(\"default\", label=\"Reset\", c(\"Predict\",\"Reset\"), selected = \"Reset\"),\n    submitButton(text = \"Make Prediciton\", icon = icon(\"question\",  lib = \"font-awesome\")),\n   br(),\n   h4('This application was built with Rstudio and Shiny'),\n   img(src=\"RStudio-Ball.png\", height = 30, width = 30)\n    \n    \n  ),\n    \n  \n  # Show a plot of the generated distribution\n  mainPanel(\n    tabsetPanel(type = \"tabs\", \n      tabPanel(\"Prediction\",\n        h4('This application demonstrates text prediction'),\n        h4('Text prediction is an example of Natural Language processing or NLP'),\n        br(),   \n        h4('The number of words to predict is'),\n        verbatimTextOutput(\"nw\"),\n        h4('You selected '),\n        verbatimTextOutput(\"default\"),\n        h4('Your incomplete phrase is'),\n        verbatimTextOutput(\"tin\"),\n        br(),\n        h4('The cleaned phrase is '),\n        verbatimTextOutput(\"cleanPhrase\") ,\n       h4('My guess is '),\n       tableOutput(\"predict\") \n        ), # end predict tab\n      tabPanel(\"Help\",\n               h4('This application demonstrates text prediction'),\n               h4('Text prediction is an example of Natural Language processing or NLP'),\n               br()   \n               ) #end help tab\n      ) # end tab panel\n  )\n))\n",
+    "created" : 1429962781211.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2836430300",
+    "id" : "1A94429E",
+    "lastKnownWriteTime" : 1429976518,
+    "path" : "~/GitHub/dsCapstone/shiny/ui.R",
+    "project_path" : "shiny/ui.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

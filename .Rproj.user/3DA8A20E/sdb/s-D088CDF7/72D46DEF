@@ -1,0 +1,16 @@
+{
+    "contents" : "\n# This is the server logic for a Shiny web application.\n# You can find out more about building applications with Shiny here:\n# \n# http://www.rstudio.com/shiny/\n#\n\nlibrary(shiny)\nlibrary(wordcloud)\n\nsource(\"../runtimeFunctions.R\")\nload(\"../data/predictTDMdt.RData\", .GlobalEnv)\n\ndefault<-c(\"Excellent\",\"Wonderful\",\"Marvelous\", \"Intuitive\",\"Amusing\")\n#load(\"./data/englishStop.RData\")\n#load(\"./data/uniTDMfreq.RData\")\ndeftin<-\"This application is\"\ndefnw<-3\n  \n  shinyServer(function(input, output) {\n   \n  \n  \n#   output$resetable_input <- renderUI({\n#     times <- input$reset_input\n#     list(\n#       h4('The application will attempt to predict the next word to be typed'),\n#       br(),\n#       \n#       radioButtons(\"nw\", label = h4(\"Set the Number of Single Word Predictions\"),\n#                    choices = list(\"One\" = 1, \"Three\" = 3,\n#                                   \"Five\" = 5),selected = 3),  \n#       textInput('tin',\n#                 label=h4('Enter an incomplete phrase below'),\n#                 value = \"This application is\"),\n#       h4('Hit the Predict button to update the prediction or Reset to start over')\n#     ) # end list\n#   })\n  \n  \n    #cleanPhrase<-cleanText(input$tin)\n   output$cleanPhrase<-renderText({\n     cleanText(input$tin)\n     })\n    output$default<-renderText({input$default})  \n    \n  output$nw<-reactive({input$nw})\n  output$tin<-reactive({\n   if (length(input$tin) && sub(\" \",\"\",input$tin) == \"\" ) deftin else input$tin    \n  })\n  \n  \n  output$predict <- renderTable({\n    if(is.null(input$nw)==TRUE) sz<-defnw else sz<-input$nw\n    #run default?\n    if (input$default == \"Reset\") {\n      g1<-as.matrix(sample(default,sz),dimnames = list(NULL,\"Words\"))\n      return(g1)\n    }\n#     # run predict\n    if (input$default == \"Predict\") { \n      dtIn<-dtInput(cleanPhrase)\n      predictOut<-predictOutput(dtIn)\n      g1<-as.matrix(predictOut[1:sz,1],dimnames = list(NULL,\"Words\"))\n    }\n   })\n  \n  \n  \n  }) # end  shinyServer function",
+    "created" : 1429963018817.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1526889567",
+    "id" : "72D46DEF",
+    "lastKnownWriteTime" : 1429979625,
+    "path" : "~/GitHub/dsCapstone/shiny/server.R",
+    "project_path" : "shiny/server.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

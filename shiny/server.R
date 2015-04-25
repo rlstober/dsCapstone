@@ -6,7 +6,11 @@
 #
 
 library(shiny)
-library(stringi)
+library(wordcloud)
+
+source("../runtimeFunctions.R")
+load("../data/predictTDMdt.RData", .GlobalEnv)
+
 default<-c("Excellent","Wonderful","Marvelous", "Intuitive","Amusing")
 #load("./data/englishStop.RData")
 #load("./data/uniTDMfreq.RData")
@@ -17,24 +21,30 @@ defnw<-3
    
   
   
-  output$resetable_input <- renderUI({
-    times <- input$reset_input
-    list(
-      h4('The application will attempt to predict the next word to be typed'),
-      br(),
-      
-      radioButtons("nw", label = h4("Set the Number of Single Word Predictions"),
-                   choices = list("One" = 1, "Three" = 3,
-                                  "Five" = 5),selected = 3),  
-      textInput('tin',
-                label=h4('Enter an incomplete phrase below'),
-                value = "This application is"),
-      h4('Hit the Predict button to update the prediction or Reset to start over')
-    ) # end list
-  })
+#   output$resetable_input <- renderUI({
+#     times <- input$reset_input
+#     list(
+#       h4('The application will attempt to predict the next word to be typed'),
+#       br(),
+#       
+#       radioButtons("nw", label = h4("Set the Number of Single Word Predictions"),
+#                    choices = list("One" = 1, "Three" = 3,
+#                                   "Five" = 5),selected = 3),  
+#       textInput('tin',
+#                 label=h4('Enter an incomplete phrase below'),
+#                 value = "This application is"),
+#       h4('Hit the Predict button to update the prediction or Reset to start over')
+#     ) # end list
+#   })
   
-  output$nw<-renderPrint({input$nw})
-  #output$tin<-renderPrint({input$tin})
+  
+    #cleanPhrase<-cleanText(input$tin)
+   output$cleanPhrase<-renderText({
+     cleanText(input$tin)
+     })
+    output$default<-renderText({input$default})  
+    
+  output$nw<-reactive({input$nw})
   output$tin<-reactive({
    if (length(input$tin) && sub(" ","",input$tin) == "" ) deftin else input$tin    
   })
@@ -42,12 +52,19 @@ defnw<-3
   
   output$predict <- renderTable({
     if(is.null(input$nw)==TRUE) sz<-defnw else sz<-input$nw
-    g1<-as.matrix(sample(default,sz),dimanes = list(NULL,"Words"))
-    # add stop word
-    #if (sz!=1) g1<-rbind(g1,(sample(englishStop,1)))
-  })
+    #run default?
+    if (input$default == "Reset") {
+      g1<-as.matrix(sample(default,sz),dimnames = list(NULL,"Words"))
+      return(g1)
+    }
+#     # run predict
+    if (input$default == "Predict") { 
+      dtIn<-dtInput(cleanPhrase)
+      predictOut<-predictOutput(dtIn)
+      g1<-as.matrix(predictOut[1:sz,1],dimnames = list(NULL,"Words"))
+    }
+   })
   
-  output$vin
   
-  })
-
+  
+  }) # end  shinyServer function
