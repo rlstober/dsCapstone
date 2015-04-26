@@ -16,6 +16,7 @@ library(sqldf)
 source("./runtimeFunctions.R")
 load("./predictTDMdt.RData", .GlobalEnv)
 
+
 #default prediction
 default<-c("Excellent","Impressive","Responsive", "Intuitive","Well-designed","Informative", "Novel", "Well-Done", "Ambitious")
 #default text input

@@ -145,6 +145,17 @@ str(predictTDMdt)
 save(predictTDMdt, file="../data/predictTDMdt.RData")
 save(predictTDMdt, file="./predictTDMdt.RData")
 
+# csv action
+write.csv(predictTDMdt, file="./predictTDMdt.csv",, quote=FALSE, row.names=FALSE)
+#manually review
+
+myData <- read.csv("predictTDMdtClean.csv", header=TRUE, stringsAsFactors=FALSE)
+predictTDMdt<-as.data.table(myData)
+
+str(predictTDMdt)
+#write clean file
+save(predictTDMdt, file="./predictTDMdt.RData")
+
 #split into train test and validation
 # set.seed<-12345
 # 
