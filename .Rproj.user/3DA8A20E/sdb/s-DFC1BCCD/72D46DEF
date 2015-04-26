@@ -1,0 +1,16 @@
+{
+    "contents" : "\n# This is the server logic for a Shiny web application.\n# You can find out more about building applications with Shiny here:\n# \n# http://www.rstudio.com/shiny/\n#\nrm(list=ls()); gc()\nlibrary(shiny)\nlibrary(stringi)\nlibrary(stringr)\nlibrary(data.table)\nlibrary(sqldf)\n# library(wordcloud)\n# require(tcltk)\n\nsource(\"./runtimeFunctions.R\")\nload(\"./predictTDMdt.RData\", .GlobalEnv)\n\n#default prediction\ndefault<-c(\"Excellent\",\"Impressive\",\"Responsive\", \"Intuitive\",\"Well-designed\",\"Informative\", \"Novel\", \"Well-Done\", \"Ambitious\")\n#default text input\ndeftin<-\"This application is\"\n# number of words\ndefnw<-3\n# wordcloud image number\nnc<<-0\n  \nshinyServer(function(input, output) {\n   \n\n  \n#defaults\n\n   \noutput$default<-renderText({input$default})  \n    \n  output$nw<-renderText({input$nw})\n  output$tin<-reactive({\n   if (length(input$tin) && sub(\" \",\"\",input$tin) == \"\" ) deftin else input$tin    \n  })\n\n\n\n\n  output$predict <- renderTable({\n    nc<-2\n    if(is.null(input$nw)==TRUE) sz<-defnw else sz<-input$nw\n    cleanPhrase<-cleanText(input$tin)\n    if (length(input$tin) && sub(\" \",\"\",input$tin) == \"\" ) cleanPhrase<-cleanText(deftin) \n    cleanPhrase<-cleanText(input$tin)\n    output$cleanPhrase<-renderText({cleanPhrase})\n    dtIn<-dtInput(cleanPhrase)\n    predictResultTableSum<-predictOutput(dtIn)\n    predictResult<-sqldf(\"select w, Probability from predictResultTableSum order by Probability DESC limit 5\")\n    g1<-as.matrix(predictResult[1:sz,1])\n    if (cleanPhrase==cleanText(deftin) ) g1<-as.matrix(sample(default,sz))\n    dimnames(g1)<-list(NULL, \"Words\")\n    return(g1)\n   })\n  \n \n\n\n  # Send a pre-rendered image, and don't delete the image after sending it\n#   output$cloud <- renderImage({\n#     # When input$n is 1, filename is ./images/image1.jpeg\n#     # add 1 to image number each time range 0 -3\n#     if (nc==3) nc<<-0 else nc<<- nc+1\n#     #if start use image 0\n#     if (deftin == input$tin) nc<<-0\n#     filename <- normalizePath(file.path('./www',\n#                               paste('cloud', nc, '.png', sep='')))\n# \n#     # Return a list containing the filename\n#     list(src = filename)\n#   }, deleteFile = FALSE)\n\n\n\n\n\n\n\nenv <- environment()  # can use globalenv(), parent.frame(), etc\noutput$env <- renderTable({\n  data.frame(\n    object = ls(env),\n    size = unlist(lapply(ls(env), function(x) {\n      object.size(get(x, envir = env, inherits = FALSE))\n    }))\n  )\n})\n  \n  }) # end  shinyServer function",
+    "created" : 1429963018817.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2101601077",
+    "id" : "72D46DEF",
+    "lastKnownWriteTime" : 1430063873,
+    "path" : "~/GitHub/dsCapstone/shiny/server.R",
+    "project_path" : "shiny/server.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

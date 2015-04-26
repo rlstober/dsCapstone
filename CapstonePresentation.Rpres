@@ -7,7 +7,7 @@ author: Robert Stober
 date: 4/18/2015
 
 
-Predicting Words
+Predict Words
 ========================================================
 * New Shiny Application is a great teaching tool 
 * Use it to demonstrate
@@ -22,21 +22,20 @@ How it Works: The Application
   + default is 3
 * Enter a Phrase
   + default is 'This application is'
-* Click the Reset button to restore defaults
 * Click the Predict button to predict the next word in the phrase
-* Best guess and additional likely words are displayed
+* Best guess, and if selected, additional likely words are displayed
 
 
 How it Works: The Algorthim
 ========================================================
-* Bag of Word Algorithm with Katz Back Off Model
+* Bag of Word Algorithm with Stupid Back Off Model
+  + Kneser-Ney Smoothing of Unigrams
 * Preprocessing
   + Convert to lower case, Remove puntuation and stopwords
-* Subset Train, Test and Cross Validation data sets
 * Build Unigram, Bigram and Trigram Frequency Matrixes
   + Remove sparse terms and Add Discounting 
-* Determine Parameters for Linear Interpolation
-  + Based on accuracy
+* Subset Train, and Test
+  + Determine Based on accuracy against test set
 
 
 Try it Out

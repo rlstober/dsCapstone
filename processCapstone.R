@@ -1,7 +1,8 @@
 #process
 
 # user defined functions
-source("./cleanTextFunction.R")
+#source("./cleanTextFunction.R")
+source("./shiny/runtimeFunctions.R")
 
 #download if 
 source("./downloadCapstoneData.R")

@@ -1,0 +1,17 @@
+{
+    "contents" : "#process\n\n# user defined functions\n#source(\"./cleanTextFunction.R\")\nsource(\"./shiny/runtimeFunctions.R\")\n\n#download if \nsource(\"./downloadCapstoneData.R\")\n\n# read files in\nsource(\"./readFilescapstone.R\")\n\n# clean it up and save\nsource(\"./saveCleanData.R\")\n\n# sample and save\nsource(\"./saveSampleData.R\")\n\n# create sparse document term matrix and save frequency tables\nsource(\"./buildNgrams.R\")\n\n# build and save data tables used in prediction\nsource(\"./buildDataTables.R\")\n",
+    "created" : 1430069558413.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1645278048",
+    "id" : "32A14ECE",
+    "lastKnownWriteTime" : 1430016244,
+    "path" : "~/GitHub/dsCapstone/processCapstone.R",
+    "project_path" : "processCapstone.R",
+    "properties" : {
+        "tempName" : "Untitled2"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

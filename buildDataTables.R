@@ -23,13 +23,19 @@ buildDt<-function(tdm){
 ## 2-grams
 
 #load data
-load("./data/biTDMsparseFreq.RData")
+load("../data/biTDMsparseFreq.RData")
 # data table
 biTDMdt<-buildDt(biTDMsparseFreq)
 # redundant used for joins
 biTDMdt$Bigram<-biTDMdt$Phrase
 #split
 biTDMdt<-separate(biTDMdt, Phrase, into=c("v","w"), sep = " ", remove = FALSE, convert = FALSE)
+str(biTDMdt)
+# remove rows with single letter in v or w
+biTDMdf<- (sqldf("select * from biTDMdt where length(w) >1"))
+biTDMdt<-as.data.table(biTDMdf)
+biTDMdf<- sqldf("select * from biTDMdt where length(v) >1")
+biTDMdt<-as.data.table(biTDMdf)
 
 # get probability
 countV<-sqldf("select v, sum(Count) as Count from biTDMdt group by v")
@@ -44,16 +50,27 @@ countW$ContinuationProb<-countW$ContinuationCount/nrow(countW)
 biTDMdt$ContinuationProb<-sqldf("select countW.ContinuationProb from biTDMdt join countW using (w)")
 str(biTDMdt)
 head(biTDMdt)
+rm(biTDMsparseFreq)
 
 # 3-grams
 #load
-load("./data/triTDMsparseFreq.RData")
+load("../data/triTDMsparseFreq.RData")
 # build data table
 triTDMdt<-buildDt(triTDMsparseFreq)
 # redundant used for joins
 triTDMdt$TRigram<-triTDMdt$Phrase
 #separate words in phrase
 triTDMdt<-separate(triTDMdt, Phrase, into=c("u","v","w"), sep = " ", remove = FALSE, convert = FALSE)
+
+# remove rows with single letter in  t, v or w
+triTDMdf<- sqldf("select * from triTDMdt where length(w) >1")
+triTDMdt<-as.data.table(triTDMdf)
+triTDMdf<- sqldf("select * from triTDMdt where length(v) >1")
+triTDMdt<-as.data.table(triTDMdf)
+triTDMdf<- sqldf("select * from triTDMdt where length(u) >1")
+triTDMdt<-as.data.table(triTDMdf)
+
+
 # leading Bigram
 triTDMdt$Bigram<-paste(triTDMdt$u,triTDMdt$v)
 
@@ -67,16 +84,27 @@ triTDMdt$BigramCount<-sqldf("select countUV.Count from triTDMdt join countUV usi
 triTDMdt$TrigramProbability<-triTDMdt$Count/triTDMdt$BigramCount
 str(triTDMdt)
 head(triTDMdt)
-
+rm(triTDMsparseFreq)
 
 ## 4-grams
 
 #load data
-load("./data/quadTDMsparseFreq.RData")
+load("../data/quadTDMsparseFreq.RData")
 quadTDMdt<-buildDt(quadTDMsparseFreq)
 
 #separate words in phrase
 quadTDMdt<-separate(quadTDMdt, Phrase, into=c("t","u","v","w"), sep = " ", remove = FALSE, convert = FALSE)
+
+# remove rows with single letter in  v or w
+quadTDMdf<- sqldf("select * from quadTDMdt where length(w) >1")
+quadTDMdt<-as.data.table(quadTDMdf)
+quadTDMdf<- sqldf("select * from quadTDMdt where length(v) >1")
+quadTDMdt<-as.data.table(quadTDMdf)
+quadTDMdf<- sqldf("select * from quadTDMdt where length(u) >1")
+quadTDMdt<-as.data.table(quadTDMdf)
+quadTDMdf<- sqldf("select * from quadTDMdt where length(t) >1")
+quadTDMdt<-as.data.table(quadTDMdf)
+
 # leading Trigram
 quadTDMdt$Trigram<-paste(quadTDMdt$t, quadTDMdt$u, quadTDMdt$v)
 # leading Bigram
@@ -98,6 +126,7 @@ quadTDMdt$QuadgramProbability<-quadTDMdt$Count/quadTDMdt$TrigramCount
 
 str(quadTDMdt)
 head(quadTDMdt)
+rm(quadTDMsparseFreq)
 
 ##Join to one dataset
 
@@ -113,24 +142,25 @@ str(predictTDMdt)
 ## divide and save
 
 #save complete data table
-save(predictTDMdt, file="./data/predictTDMdt.RData")
+save(predictTDMdt, file="../data/predictTDMdt.RData")
+save(predictTDMdt, file="./predictTDMdt.RData")
 
 #split into train test and validation
-set.seed<-12345
-
-# get training and save
-split<-sample.split(predictTDMdt, SplitRatio = 2/3)
-predictTDMdtTrain<-subset(predictTDMdt, split==TRUE)
-save(predictTDMdtTrain, file="./data/predictTDMdtTrain.RData")
-
-#get the rest
-predictTDMdtRest<-subset(predictTDMdt, split==FALSE)
-#split into train and test and validation
-split<-sample.split(predictTDMdtRest, SplitRatio = 1/2)
-#get and save test
-predictTDMdtTest<-subset(predictTDMdtRest, split==TRUE)
-save(predictTDMdtTest, file="./data/predictTDMdtTest.RData")
-#get and save val
-predictTDMdtVal<-subset(predictTDMdtRest, split==FALSE)
-save(predictTDMdtVal, file="./data/predictTDMdtVal.RData")
+# set.seed<-12345
+# 
+# # get training and save
+# split<-sample.split(predictTDMdt, SplitRatio = 2/3)
+# predictTDMdtTrain<-subset(predictTDMdt, split==TRUE)
+# save(predictTDMdtTrain, file="./data/predictTDMdtTrain.RData")
+# 
+# #get the rest
+# predictTDMdtRest<-subset(predictTDMdt, split==FALSE)
+# #split into train and test and validation
+# split<-sample.split(predictTDMdtRest, SplitRatio = 1/2)
+# #get and save test
+# predictTDMdtTest<-subset(predictTDMdtRest, split==TRUE)
+# save(predictTDMdtTest, file="./data/predictTDMdtTest.RData")
+# #get and save val
+# predictTDMdtVal<-subset(predictTDMdtRest, split==FALSE)
+# save(predictTDMdtVal, file="./data/predictTDMdtVal.RData")
 

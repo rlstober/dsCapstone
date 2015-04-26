@@ -5,8 +5,9 @@ library(stringi)
 library(stringr)
 library(data.table)
 library(sqldf)
-library(wordcloud)
-require(tcltk)
+# library(wordcloud)
+# require(tcltk)
+# load("./predictTDMdt.RData", .GlobalEnv)
 
 cleanText<-function(myText){
   resultText <- stri_trans_tolower(myText)
@@ -65,8 +66,8 @@ predictOutput<-function(dtIn){
   #words may not be distinct
   predictResultTableSum<-sqldf("select w, max(Probability) as Probability from predictResultTable group by w")
   #get top 5
-  predictResult<-sqldf("select w, Probability from predictResultTableSum order by Probability DESC limit 5")
+  #predictResult<-sqldf("select w, Probability from predictResultTableSum order by Probability DESC limit 5")
   
-  return(predictResult)
+  return(predictResultTableSum)
 }
 

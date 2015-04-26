@@ -25,11 +25,11 @@ save(blogDataSample,twitterDataSample, newsDataSample,file=englishSaveSample)
 
 
 # Sample connections
-# blogCon<-file("./sampleData/blogsSamp.txt")
-# twitterCon<-file("./sampleData/twitterSamp.txt")
-# newsCon<-file("./sampleData/newsSamp.txt")
-# 
-# 
-# writeLines(blogDataSample, blogCon);close(blogCon)
-# writeLines(newsDataSample, newsCon);close(newsCon)
-# writeLines(twitterDataSample, twitterCon);close(twitterCon)
+blogCon<-file("./sampleData/blogsSamp.txt")
+twitterCon<-file("./sampleData/twitterSamp.txt")
+newsCon<-file("./sampleData/newsSamp.txt")
+
+
+writeLines(blogDataSample, blogCon);close(blogCon)
+writeLines(newsDataSample, newsCon);close(newsCon)
+writeLines(twitterDataSample, twitterCon);close(twitterCon)

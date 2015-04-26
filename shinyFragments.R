@@ -21,6 +21,17 @@
 #   
 
 
+# wordcloud_rep <- repeatable(wordcloud)
+# output$Cloud<-renderPlot({
+#   defaultR<-runif(length(default))
+#   wordcloud_rep(default,defaultR, max.words = length(default), scale=c(3.5,0.2), colors=brewer.pal(4,"Dark2"))
+# })  
+# 
+# output$Cloud<-renderPlot({
+#   wordcloud_rep(predictResultTableSum$w,predictResultTableSum$Probability,max.words = 20, scale=c(3.5,0.2), colors=brewer.pal(4,"Dark2"))
+# })  
+
+
 # output$nw<-renderText({
 #   if (is.null(input$nw) ==TRUE) defnw else input$nw
 # }) 

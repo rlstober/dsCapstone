@@ -1,0 +1,17 @@
+{
+    "contents" : "#buildNgrams\nrm(list=ls()); gc()\nlibrary(tm)\nlibrary(RWeka)\nlibrary(SnowballC)\nlibrary(ggplot2)\nlibrary(slam)\n\n##load sample data\nenglishSaveSample<-\"./data/englishTextSample.RData\"\nload(englishSaveSample)\n\nblogCorpus<-VCorpus(DataframeSource(data.frame(blogDataSample)))\ntwitterCorpus<-VCorpus(DataframeSource(data.frame(twitterDataSample)))\nnewsCorpus<-VCorpus(DataframeSource(data.frame(newsDataSample)))\n\nenglishCorpus<-c(blogCorpus,twitterCorpus,newsCorpus)\n\n#clear up some mem\nrm(blogCorpus)\nrm(newsCorpus)\nrm(twitterCorpus)\n\nrm(blogDataSample)\nrm(newsDataSample)\nrm(twitterDataSample)\n\ngc()\n\n\n#set up tokenizer functions from Rweka\nuniToken <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 1)) \nbiToken <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2)) \ntriToken <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3)) \nquadToken <- function(x) NGramTokenizer(x, Weka_control(min = 4, max = 4)) \n\n\n\n## tokenize\n\nsparsity<-.8\n## 1-grams\n\nuniTDM<- TermDocumentMatrix(englishCorpus, control = list(removeWhitespace = TRUE, tokenizer = uniToken))\n#uniTDMfreq <- sort(rowapply_simple_triplet_matrix(uniTDM,sum), decreasing = TRUE)\nuniTDMsparse<-removeSparseTerms(uniTDM,.99999)\nuniTDMsparseFreq <- sort(rowapply_simple_triplet_matrix(uniTDMsparse,sum), decreasing = TRUE)\ntail(uniTDMsparseFreq)\nsave(uniTDMsparseFreq, file=\"./data/uniTDMsparseFreq.RData\")\n\n# 2 -grams\n\nbiTDM<- TermDocumentMatrix(englishCorpus, control = list( removeWhitespace = TRUE, tokenizer = biToken))\nbiTDMsparse<-removeSparseTerms(biTDM,.99995)\nbiTDMsparseFreq <- sort(rowapply_simple_triplet_matrix(biTDMsparse,sum), decreasing = TRUE)\n#tail(biTDMsparseFreq)\nsave(biTDMsparseFreq, file=\"./data/biTDMsparseFreq.RData\")\n\n# 3-grams\ntriTDM<- TermDocumentMatrix(englishCorpus, control = list(removeWhitespace = TRUE, tokenizer = triToken))\ntriTDMsparse<-removeSparseTerms(triTDM,.99997)\ntriTDMsparseFreq <- sort(rowapply_simple_triplet_matrix(triTDMsparse,sum), decreasing = TRUE)\ntail(triTDMsparseFreq)\nsave(triTDMsparseFreq, file=\"./data/triTDMsparseFreq.RData\")\n\n#4-grams\nquadTDM<- TermDocumentMatrix(englishCorpus, control = list(removeWhitespace = TRUE, tokenizer = quadToken))\nquadTDMsparse<-removeSparseTerms(quadTDM,.99999)\nquadTDMsparseFreq <- sort(rowapply_simple_triplet_matrix(quadTDMsparse,sum), decreasing = TRUE)\ntail(quadTDMsparseFreq)\nsave(quadTDMsparseFreq, file=\"./data/quadTDMsparseFreq.RData\")\n\n",
+    "created" : 1430070337873.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4276274836",
+    "id" : "F7B1753",
+    "lastKnownWriteTime" : 1429711602,
+    "path" : "~/GitHub/dsCapstone/buildNgrams.R",
+    "project_path" : "buildNgrams.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
