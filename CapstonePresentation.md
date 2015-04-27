@@ -19,7 +19,7 @@ Predict Words
 How it Works: The Application
 =======================================================
 * Enter number of words to be predicted
-  + default is 3
+  + default is 1
 * Enter a Phrase
   + default is 'This application is'
 * Click the Predict button to predict the next word in the phrase

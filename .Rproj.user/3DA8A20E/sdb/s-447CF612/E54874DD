@@ -1,0 +1,17 @@
+{
+    "contents" : "John Hopkins Data Science Specialization \n========================================================\n## Capstone Project\n\nauthor: Robert Stober\n\ndate: 4/18/2015\n\n\nPredict Words\n========================================================\n* New Shiny Application is a great teaching tool \n* Use it to demonstrate\n  + Principles Natural Language Processing (NLP)\n  + Shiny Application Development\n  + R Programming\n\n\nHow it Works: The Application\n=======================================================\n* Enter number of words to be predicted\n  + default is 1\n* Enter a Phrase\n  + default is 'This application is'\n* Click the Predict button to predict the next word in the phrase\n* Best guess, and if selected, additional likely words are displayed\n\n\nHow it Works: The Algorithm\n========================================================\n* Bag of Word Algorithm with Stupid Back Off Model\n  + Kneser-Ney Smoothing of Unigrams\n* Pre-processing\n  + Convert to lower case, Remove punctuation and stop words\n* Build Unigram, Bigram Trigram and 4-gram Frequency Matrices\n  + Remove sparse terms\n* Subset Train and Test\n  + Determine Based on accuracy against test set\n\n\nTry it Out\n========================================================\n[Click Here to Try the Predict Words Application](http://rlstober.shinyapps.io/PredictWords/)|\n------------- |\n![Predict words](Capture.png)|\n\n",
+    "created" : 1430095714247.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4085597461",
+    "id" : "E54874DD",
+    "lastKnownWriteTime" : 1430104936,
+    "path" : "~/GitHub/dsCapstone/CapstonePresentation.Rpres",
+    "project_path" : "CapstonePresentation.Rpres",
+    "properties" : {
+        "ignored_words" : "Unigrams,Unigram,Bigram,Trigram,Stober,Kneser,Ney,Pre\n"
+    },
+    "source_on_save" : false,
+    "type" : "r_presentation"
+}

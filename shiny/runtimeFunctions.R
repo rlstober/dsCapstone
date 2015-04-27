@@ -55,12 +55,12 @@ dtInput<-function(cleanPhrase){
 #
 predictOutput<-function(dtIn){
   #unigrams has many with same probability, randomize so will be different
-  uniResult<-fn$sqldf("select distinct w, ContinuationProbability from predictTDMdt order by ContinuationProbability Desc limit 100")
+  uniResult<-sqldf("select distinct w, ContinuationProbability from predictTDMdt order by ContinuationProbability Desc limit 100")
   uniResult$r100<-sample(1:100, 100, replace=FALSE)
-  uniResultTable<-sqldf("select w, ContinuationProbability from uniResult  order by r100 limit 20")
+  uniResultTable<-sqldf("select w, ContinuationProbability from uniResult  order by r100 limit 10")
   
-  predictResultTable<-sqldf("select w, 3+ TrigramProbability as Probability from predictTDMdt join dtIn using (Trigram) 
-        UNION select w, 2+ BigramProbability  as Probability from predictTDMdt join dtIn using (Bigram) 
+  predictResultTable<-sqldf("select w, 5+ TrigramProbability as Probability from predictTDMdt join dtIn using (Trigram) 
+        UNION select w, 3+ BigramProbability  as Probability from predictTDMdt join dtIn using (Bigram) 
         UNION select w, 1+ContinuationProbability  as Probability from uniResultTable  
                           order by Probability desc")
   #words may not be distinct

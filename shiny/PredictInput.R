@@ -24,6 +24,8 @@ test2<-"fuck didn't i say i didnt wany any"
 test3<-" go to "
 
 test4<-sample(predictTDMdt$Phrase,1)
+test4
+
 testBlank<-""
 
 test<-test4

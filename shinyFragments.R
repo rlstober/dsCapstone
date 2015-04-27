@@ -32,6 +32,41 @@
 # })  
 
 
+
+
+# Send a pre-rendered image, and don't delete the image after sending it
+#   output$cloud <- renderImage({
+#     # When input$n is 1, filename is ./images/image1.jpeg
+#     # add 1 to image number each time range 0 -3
+#     if (nc==3) nc<<-0 else nc<<- nc+1
+#     #if start use image 0
+#     if (deftin == input$tin) nc<<-0
+#     filename <- normalizePath(file.path('./www',
+#                               paste('cloud', nc, '.png', sep='')))
+# 
+#     # Return a list containing the filename
+#     list(src = filename)
+#   }, deleteFile = FALSE)
+
+
+# wordcloud_rep <- repeatable(wordcloud)
+# output$Cloud<-reactive({
+#   if (cleanPhrase==cleanText(deftin) ) { 
+#   defaultR<-runif(length(default))
+#   renderPlot<-wordcloud_rep(default,defaultR, max.words = length(default), scale=c(3.5,0.2), colors=brewer.pal(4,"Dark2"))
+#   } else renderPlot<-wordcloud_rep(predictResultTableSum$w,predictResultTableSum$Probability,max.words = 20, scale=c(3.5,0.2), colors=brewer.pal(4,"Dark2"))
+#   } )
+#   
+
+
+# wordcloud_rep <- repeatable(wordcloud)
+# output$Cloud<-renderPlot({
+#     defaultR<-runif(length(default))
+#     wordcloud_rep(default,defaultR, max.words = length(default), scale=c(3.5,0.2), colors=brewer.pal(4,"Dark2"))
+# 
+# })
+
+
 # output$nw<-renderText({
 #   if (is.null(input$nw) ==TRUE) defnw else input$nw
 # }) 
